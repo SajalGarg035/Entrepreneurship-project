@@ -3,864 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="AI-Enabled Policy Simulation of EU-USA FTA Impacts. An end-to-end research dashboard evaluating structural trade diversion using GNNs, XGBoost, and Reinforcement Learning.">
-    <title>AI Policy Simulation: Trade Dynamics | Sajal Garg</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <title>The Problem | AI Policy Simulation</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        slate: {
-                            850: '#151e2e',
-                            950: '#0a0f1c',
-                        }
-                    },
-                    animation: {
-                        'blob': 'blob 7s infinite',
-                    },
-                    keyframes: {
-                        blob: {
-                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
-                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
-                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { 
-            background-color: #f8fafc; 
-            -webkit-font-smoothing: antialiased;
-        }
-        
-        /* Grid background for the hero section */
-        .bg-grid-pattern {
-            background-image: linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
-                              linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
-            background-size: 32px 32px;
-        }
-
-        /* Image hover zoom effect */
-        .img-container {
-            overflow: hidden;
-            border-radius: 0.75rem;
-        }
-        .zoom-img { 
-            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
-        }
-        .zoom-img:hover { 
-            transform: scale(1.05); 
-            cursor: zoom-in; 
-        }
-
-        /* Scroll Animations */
-        .fade-up {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-        }
-        .fade-up.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Hide scrollbar for horizontal scrolling areas */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .bg-grid { background-size: 24px 24px; background-image: linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px); }
+        .zoom-img { transition: transform 0.3s ease; }
+        .zoom-img:hover { transform: scale(1.02); }
     </style>
 </head>
-<body class="text-slate-800 font-sans selection:bg-blue-200 selection:text-blue-900">
+<body class="text-slate-800 antialiased pt-16">
 
-    <nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-lg border-b border-slate-200/80 shadow-sm transition-all duration-300" id="navbar">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="font-bold text-slate-900 tracking-tight flex items-center gap-2 flex-shrink-0">
-                    <div class="w-7 h-7 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg shadow-sm flex items-center justify-center">
-                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    </div>
-                    Trade<span class="text-blue-600">Sim</span>
-                </div>
-                
-                <div class="hidden xl:flex space-x-5 text-sm font-semibold text-slate-500">
-                    <a href="#rq-section" class="hover:text-blue-600 transition-colors">Objectives</a>
-                    <a href="#pipeline" class="hover:text-blue-600 transition-colors">Pipeline</a>
-                    <a href="#data-integration" class="hover:text-blue-600 transition-colors">Data</a>
-                    <a href="#lstm" class="hover:text-blue-600 transition-colors">Forecasting</a>
-                    <a href="#xgboost" class="hover:text-blue-600 transition-colors">ML</a>
-                    <a href="#shap" class="hover:text-blue-600 transition-colors">XAI</a>
-                    <a href="#gcn" class="hover:text-blue-600 transition-colors">GNN</a>
-                    <a href="#causal" class="hover:text-blue-600 transition-colors">Causal</a>
-                    <a href="#rl-opt" class="hover:text-blue-600 transition-colors">RL Policy</a>
-                    <a href="#final-answers" class="text-blue-600 hover:text-blue-800 transition-colors">Answers</a>
-                </div>
-
-                <div class="xl:hidden flex items-center">
-                    <button id="mobile-menu-btn" class="text-slate-500 hover:text-slate-900 focus:outline-none p-2 rounded-md hover:bg-slate-100 transition-colors">
-                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                        </svg>
-                    </button>
-                </div>
+    <nav class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm transition-all">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="index.html" class="font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                <div class="w-6 h-6 bg-blue-600 rounded-md"></div>
+                Trade<span class="text-blue-600">Sim</span>
+            </a>
+            <div class="hidden lg:flex space-x-6 text-sm font-medium text-slate-600">
+                <a href="index.html" class="hover:text-blue-600 transition-colors">1. The Problem</a>
+                <a href="data.html" class="hover:text-blue-600 transition-colors">2. Data Pipeline</a>
+                <a href="ai_models.html" class="hover:text-blue-600 transition-colors">3. AI & Forecasting</a>
+                <a href="policy_engine.html" class="hover:text-blue-600 transition-colors">4. Policy Engine</a>
             </div>
-        </div>
-
-        <div id="mobile-menu" class="hidden xl:hidden bg-white border-t border-slate-200 shadow-lg absolute w-full">
-            <div class="px-4 pt-2 pb-6 space-y-1 text-sm font-medium flex flex-col">
-                <a href="#rq-section" class="mobile-link block px-3 py-2 rounded-md text-slate-600 hover:text-blue-600 hover:bg-slate-50">Objectives</a>
-                <a href="#pipeline" class="mobile-link block px-3 py-2 rounded-md text-slate-600 hover:text-blue-600 hover:bg-slate-50">Pipeline</a>
-                <a href="#data-integration" class="mobile-link block px-3 py-2 rounded-md text-slate-600 hover:text-blue-600 hover:bg-slate-50">Data</a>
-                <a href="#lstm" class="mobile-link block px-3 py-2 rounded-md text-slate-600 hover:text-blue-600 hover:bg-slate-50">Forecasting</a>
-                <a href="#xgboost" class="mobile-link block px-3 py-2 rounded-md text-slate-600 hover:text-blue-600 hover:bg-slate-50">ML Models</a>
-                <a href="#shap" class="mobile-link block px-3 py-2 rounded-md text-slate-600 hover:text-blue-600 hover:bg-slate-50">XAI</a>
-                <a href="#gcn" class="mobile-link block px-3 py-2 rounded-md text-slate-600 hover:text-blue-600 hover:bg-slate-50">GNN</a>
-                <a href="#causal" class="mobile-link block px-3 py-2 rounded-md text-slate-600 hover:text-blue-600 hover:bg-slate-50">Causal Forests</a>
-                <a href="#rl-opt" class="mobile-link block px-3 py-2 rounded-md text-slate-600 hover:text-blue-600 hover:bg-slate-50">RL Policy Engine</a>
-                <a href="#final-answers" class="mobile-link block px-3 py-2 rounded-md text-blue-600 font-bold bg-blue-50">Final Answers</a>
-            </div>
+            <!-- Mobile Menu Button could go here -->
         </div>
     </nav>
 
-    <header class="relative bg-slate-950 text-white pt-32 pb-24 lg:pt-40 lg:pb-32 overflow-hidden">
-        <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
-            <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-blue-600/30 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
-            <div class="absolute top-[20%] right-[-10%] w-96 h-96 bg-purple-600/30 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
-            <div class="absolute bottom-[-20%] left-[20%] w-96 h-96 bg-cyan-600/30 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000"></div>
-            <div class="absolute inset-0 bg-grid-pattern opacity-50"></div>
-            <div class="absolute inset-0 bg-gradient-to-b from-transparent via-slate-950/50 to-slate-950"></div>
-        </div>
-        
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="flex flex-col lg:flex-row gap-12 lg:gap-16 items-center justify-between">
-                
-                <div class="w-full lg:w-2/3 space-y-8 text-center lg:text-left">
-                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-widest backdrop-blur-sm">
-                        <span class="relative flex h-2 w-2">
-                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                          <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-                        </span>
-                        End-to-End Research Objective Solver
-                    </div>
-                    
-                    <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] text-white">
-                        AI-Enabled Policy <br class="hidden sm:block"> Simulation of <br class="hidden lg:block">
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500">EU-USA FTA Impacts</span>
-                    </h1>
-                    
-                    <p class="text-lg md:text-xl text-slate-400 leading-relaxed max-w-2xl mx-auto lg:mx-0 font-medium">
-                        Evaluating the structural trade diversion on India's strategic supply chains and executing AI-driven interventions over a 10-year horizon.
-                    </p>
 
-                    <div class="pt-4 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
-                        <a href="#rq-section" class="w-full sm:w-auto px-8 py-4 bg-white text-slate-900 font-bold rounded-xl hover:bg-blue-50 hover:text-blue-700 transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(59,130,246,0.3)] transform hover:-translate-y-1">
-                            Explore the Research
-                        </a>
-                        <a href="#pipeline" class="w-full sm:w-auto px-8 py-4 bg-slate-800/50 text-white font-semibold rounded-xl border border-slate-700 hover:bg-slate-800 transition-all duration-300 backdrop-blur-sm">
-                            View Pipeline
-                        </a>
-                    </div>
-                </div>
-
-                <div class="w-full sm:w-80 lg:w-1/3 shrink-0 fade-up">
-                    <div class="bg-slate-900/40 border border-slate-700/50 backdrop-blur-xl rounded-3xl p-8 shadow-2xl relative overflow-hidden group hover:border-blue-500/30 transition-colors duration-500">
-                        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-bl-full -z-10 group-hover:scale-110 transition-transform duration-700"></div>
-                        
-                        <p class="text-slate-400 text-xs uppercase tracking-widest mb-6 font-bold">Lead Researcher</p>
-                        <div class="flex items-center gap-5">
-                            <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-2xl font-bold shadow-lg transform -rotate-3 group-hover:rotate-0 transition-transform duration-300">
-                                SG
-                            </div>
-                            <div>
-                                <h3 class="text-2xl font-bold text-white mb-1">Sajal Garg</h3>
-                                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-blue-300 font-mono text-xs">
-                                    IIT2023035
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-6 pt-6 border-t border-slate-800/80">
-                            <p class="text-sm text-slate-400 font-medium">Indian Institute of Information Technology, Allahabad</p>
-                        </div>
-                    </div>
-                </div>
-
+    <header class="relative bg-slate-950 text-white py-24 overflow-hidden">
+        <div class="absolute inset-0 bg-grid z-0"></div>
+        <div class="max-w-4xl mx-auto px-6 relative z-10 text-center">
+            <h1 class="text-4xl md:text-6xl font-extrabold mb-6 text-slate-50">Understanding the <span class="text-blue-400">Global Shock</span></h1>
+            <p class="text-xl text-slate-400 leading-relaxed mb-8">What happens to an emerging economy like India when the world's two biggest markets join forces without them?</p>
+            <div class="flex justify-center gap-4">
+                <a href="data.html" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-6 rounded-lg transition-colors">See the Data Framework &rarr;</a>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 space-y-32">
-        
-        <section id="rq-section" class="scroll-mt-28 fade-up">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <span class="text-blue-600 font-bold tracking-wider text-xs uppercase mb-3 block">Foundation</span>
-                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">Research Objectives</h2>
-                <p class="text-slate-500 mt-4 text-lg">The foundation of the simulation and network analysis.</p>
+    <main class="max-w-4xl mx-auto px-6 py-16 space-y-16">
+        <section class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+            <h2 class="text-3xl font-bold mb-6">The Real-World Problem Explained</h2>
+            <div class="prose prose-slate max-w-none space-y-6 text-lg text-slate-600">
+                <p>Imagine the global economy as a massive highway system. Every country is a major city, and <strong>Free Trade Agreements (FTAs)</strong> are high-speed expressways built between them. Goods travel down these expressways fast and cheap, because there are zero toll booths (tariffs).</p>
+                <p>Now, what happens if the <strong>European Union (EU)</strong> and the <strong>United States (USA)</strong>—two of the richest "cities" in the world—build an exclusive, ultra-fast expressway just for themselves? They start trading heavily with each other because it's cheaper. But what about countries not on that expressway?</p>
+                <div class="bg-blue-50 p-6 rounded-xl border-l-4 border-blue-500 text-blue-900">
+                    <h3 class="font-bold mb-2">Trade Diversion: The Silent Killer</h3>
+                    <p class="text-base">This is called <strong>Trade Diversion</strong>. The EU and USA aren't attacking India, but by making it incredibly cheap to trade with each other, India's exports suddenly look more expensive. Buyers in the US who used to buy Indian textiles or electronics might now buy them from Europe because there are no longer any tariffs.</p>
+                </div>
+                <p>For India, this means <strong>lost jobs, closed factories, and broken supply chains</strong> in critical sectors like auto parts, pharmaceuticals, and machinery. It means being pushed out of the "Global Value Chain"—the international assembly line where products are made.</p>
             </div>
-            
-            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 relative overflow-hidden group flex flex-col h-full transform hover:-translate-y-1">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-red-50 to-transparent rounded-bl-full -z-10 group-hover:scale-110 transition-transform duration-500"></div>
-                    <div class="w-14 h-14 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center font-black text-xl mb-8 shadow-sm">Q1</div>
-                    <h3 class="text-slate-900 font-bold mb-4 text-xl">Impact Assessment</h3>
-                    <p class="text-slate-600 leading-relaxed text-sm flex-grow">How does an EU–USA FTA cause structural trade diversion affecting India’s strategic supply chains?</p>
+        </section>
+
+        <section class="space-y-8">
+            <h2 class="text-3xl font-bold text-center">Our Research Objectives</h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-red-500">
+                    <h3 class="font-bold text-lg mb-2">1. Measure the Damage</h3>
+                    <p class="text-slate-600">Exactly how much money and trade volume will India lose? Which industries will be hit the hardest by this new EU-US trade express lane?</p>
                 </div>
-                <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 relative overflow-hidden group flex flex-col h-full transform hover:-translate-y-1 lg:translate-y-4">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-blue-50 to-transparent rounded-bl-full -z-10 group-hover:scale-110 transition-transform duration-500"></div>
-                    <div class="w-14 h-14 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center font-black text-xl mb-8 shadow-sm">Q2</div>
-                    <h3 class="text-slate-900 font-bold mb-4 text-xl">Policy Interventions</h3>
-                    <p class="text-slate-600 leading-relaxed text-sm flex-grow">Which specific policy implementations (Subsidies, Tariffs, Alternative FTAs) best enhance supply chain security?</p>
+                <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-amber-500">
+                    <h3 class="font-bold text-lg mb-2">2. Test the Cures</h3>
+                    <p class="text-slate-600">If the government has a limited budget, should they hand out cash subsidies to factories, or spend years negotiating new treaties with other countries?</p>
                 </div>
-                <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 relative overflow-hidden group flex flex-col h-full transform hover:-translate-y-1 sm:col-span-2 lg:col-span-1 lg:translate-y-8">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-emerald-50 to-transparent rounded-bl-full -z-10 group-hover:scale-110 transition-transform duration-500"></div>
-                    <div class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center font-black text-xl mb-8 shadow-sm">Q3</div>
-                    <h3 class="text-slate-900 font-bold mb-4 text-xl">AI Optimization</h3>
-                    <p class="text-slate-600 leading-relaxed text-sm flex-grow">How can AI-based simulations (RL) automatically guide strategic policymaking over 10-year horizons?</p>
+                <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-emerald-500">
+                    <h3 class="font-bold text-lg mb-2">3. Automate Policy</h3>
+                    <p class="text-slate-600">Can an AI safely guide a government through a 10-year economic war, maximizing survival while keeping the budget balanced?</p>
                 </div>
             </div>
         </section>
 
-        <section id="pipeline" class="scroll-mt-28 fade-up">
-            <div class="bg-slate-950 rounded-[2.5rem] p-8 sm:p-12 lg:p-16 shadow-2xl text-white relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
-                <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3"></div>
-
-                <div class="relative z-10 text-center mb-16 max-w-3xl mx-auto">
-                    <span class="text-blue-400 font-bold tracking-widest text-xs uppercase mb-3 block">System Architecture</span>
-                    <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight mb-4">Pipeline Flow</h2>
-                    <p class="text-slate-400 text-lg">The end-to-end multi-model pipeline moving from raw data to continuous policy execution.</p>
-                </div>
-                
-                <div class="relative z-10 flex flex-nowrap lg:flex-wrap xl:flex-nowrap items-stretch gap-4 overflow-x-auto pb-8 pt-4 px-2 no-scrollbar snap-x">
-                    
-                    <div class="bg-slate-900 p-5 rounded-2xl min-w-[160px] flex-1 text-center border border-slate-800 shadow-lg shrink-0 snap-center relative group hover:border-blue-500/50 transition-colors">
-                        <div class="text-[10px] font-black text-slate-500 mb-2 tracking-widest uppercase">1. DATA</div>
-                        <div class="text-base font-bold text-white mb-2">Integration</div>
-                        <p class="text-xs text-slate-400">Merged global trade databases.</p>
-                        <div class="hidden xl:block absolute -right-3 top-1/2 -translate-y-1/2 text-slate-600 z-20"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg></div>
-                    </div>
-
-                    <div class="bg-slate-900 p-5 rounded-2xl min-w-[160px] flex-1 text-center border border-slate-800 shadow-lg shrink-0 snap-center relative group hover:border-sky-500/50 transition-colors">
-                        <div class="text-[10px] font-black text-sky-500 mb-2 tracking-widest uppercase">2. NETWORK</div>
-                        <div class="text-base font-bold text-white mb-2">Graph Theory</div>
-                        <p class="text-xs text-slate-400">Calculated edge centrality.</p>
-                        <div class="hidden xl:block absolute -right-3 top-1/2 -translate-y-1/2 text-slate-600 z-20"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg></div>
-                    </div>
-
-                    <div class="bg-slate-900 p-5 rounded-2xl min-w-[160px] flex-1 text-center border border-slate-800 shadow-lg shrink-0 snap-center relative group hover:border-red-500/50 transition-colors">
-                        <div class="text-[10px] font-black text-red-500 mb-2 tracking-widest uppercase">3. SHOCK</div>
-                        <div class="text-base font-bold text-white mb-2">Simulation</div>
-                        <p class="text-xs text-slate-400">Simulate EU restriction.</p>
-                        <div class="hidden xl:block absolute -right-3 top-1/2 -translate-y-1/2 text-slate-600 z-20"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg></div>
-                    </div>
-
-                    <div class="bg-slate-900 p-5 rounded-2xl min-w-[160px] flex-1 text-center border border-slate-800 shadow-lg shrink-0 snap-center relative group hover:border-orange-500/50 transition-colors">
-                        <div class="text-[10px] font-black text-orange-500 mb-2 tracking-widest uppercase">4. ML</div>
-                        <div class="text-base font-bold text-white mb-2">XGBoost & LSTM</div>
-                        <p class="text-xs text-slate-400">Predict exact volume loss.</p>
-                        <div class="hidden xl:block absolute -right-3 top-1/2 -translate-y-1/2 text-slate-600 z-20"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg></div>
-                    </div>
-
-                    <div class="bg-slate-900 p-5 rounded-2xl min-w-[160px] flex-1 text-center border border-slate-800 shadow-lg shrink-0 snap-center relative group hover:border-purple-500/50 transition-colors">
-                        <div class="text-[10px] font-black text-purple-500 mb-2 tracking-widest uppercase">5. XAI</div>
-                        <div class="text-base font-bold text-white mb-2">SHAP</div>
-                        <p class="text-xs text-slate-400">Explain algorithm drivers.</p>
-                        <div class="hidden xl:block absolute -right-3 top-1/2 -translate-y-1/2 text-slate-600 z-20"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg></div>
-                    </div>
-
-                    <div class="bg-slate-900 p-5 rounded-2xl min-w-[160px] flex-1 text-center border border-slate-800 shadow-lg shrink-0 snap-center relative group hover:border-cyan-500/50 transition-colors">
-                        <div class="text-[10px] font-black text-cyan-500 mb-2 tracking-widest uppercase">6. POLICY</div>
-                        <div class="text-base font-bold text-white mb-2">Causal Forests</div>
-                        <p class="text-xs text-slate-400">Test treatment effects.</p>
-                        <div class="hidden xl:block absolute -right-3 top-1/2 -translate-y-1/2 text-slate-600 z-20"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg></div>
-                    </div>
-
-                    <div class="bg-emerald-950/80 p-5 rounded-2xl min-w-[160px] flex-1 text-center border border-emerald-800/50 shadow-lg shrink-0 snap-center relative group hover:border-emerald-500 transition-colors">
-                        <div class="text-[10px] font-black text-emerald-400 mb-2 tracking-widest uppercase">7. AI</div>
-                        <div class="text-base font-bold text-white mb-2">RL (PPO)</div>
-                        <p class="text-xs text-emerald-200/70">Solve policy pathway.</p>
-                        <div class="hidden xl:block absolute -right-3 top-1/2 -translate-y-1/2 text-slate-600 z-20"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg></div>
-                    </div>
-
-                    <div class="bg-pink-950/80 p-5 rounded-2xl min-w-[160px] flex-1 text-center border border-pink-800/50 shadow-lg shrink-0 snap-center relative group hover:border-pink-500 transition-colors">
-                        <div class="text-[10px] font-black text-pink-400 mb-2 tracking-widest uppercase">8. VALIDATION</div>
-                        <div class="text-base font-bold text-white mb-2">GNN</div>
-                        <p class="text-xs text-pink-200/70">Verify geometry changes.</p>
-                    </div>
-                </div>
-
-                <div class="relative z-10 mt-12 bg-slate-900/80 backdrop-blur-md p-6 sm:p-8 rounded-2xl border-l-4 border-blue-500 border-y border-r border-slate-800 shadow-inner">
-                    <h4 class="font-bold text-white mb-3 text-lg flex items-center gap-2">
-                        <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        Why this pipeline?
-                    </h4>
-                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-4">
-                        A single model cannot answer all questions. We needed <strong class="text-sky-300">Data Physics</strong> (Network Graphs) to set the stage, <strong class="text-orange-300">Predictive ML</strong> (XGBoost/LSTM) to map the damage, <strong class="text-purple-300">Explainable AI</strong> (SHAP) to unpack the "Why", and finally <strong class="text-cyan-300">Causal inference and Reinforcement Learning</strong> to actively compute real-world policy solutions dynamically over 10 years.
-                    </p>
-                    <div class="pt-4 border-t border-slate-700/50 flex items-start sm:items-center gap-3">
-                        <span class="px-2.5 py-1 rounded bg-blue-500/20 text-blue-300 text-xs font-bold tracking-wider uppercase shrink-0">Output</span>
-                        <span class="text-sm text-slate-400">A unified engine that takes raw global data and spits out mathematically verified policy execution orders.</span>
-                    </div>
-                </div>
+        <section class="bg-slate-900 text-white p-8 rounded-2xl">
+            <h2 class="text-2xl font-bold mb-4">How we solved this (The System Pipeline)</h2>
+            <p class="text-slate-300 mb-6">To answer these questions, we couldn't just guess. We built a digital twin of international trade using 8 advanced AI steps:</p>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center text-sm">
+                <div class="bg-slate-800 p-4 rounded-lg border border-slate-700"><strong>1. Data</strong><br><span class="text-slate-400">Merge databases</span></div>
+                <div class="bg-slate-800 p-4 rounded-lg border border-slate-700"><strong>2. Networks</strong><br><span class="text-slate-400">Map global routes</span></div>
+                <div class="bg-slate-800 p-4 rounded-lg border border-slate-700"><strong>3. Shock</strong><br><span class="text-slate-400">Simulate the FTA</span></div>
+                <div class="bg-slate-800 p-4 rounded-lg border border-slate-700"><strong>4. Predict (ML)</strong><br><span class="text-slate-400">XGBoost & LSTM</span></div>
+                <div class="bg-slate-800 p-4 rounded-lg border border-slate-700"><strong>5. Explain (XAI)</strong><br><span class="text-slate-400">SHAP feature drivers</span></div>
+                <div class="bg-slate-800 p-4 rounded-lg border border-slate-700"><strong>6. Valid (GNN)</strong><br><span class="text-slate-400">Graph geometry changes</span></div>
+                <div class="bg-slate-800 p-4 rounded-lg border border-slate-700"><strong>7. Test (Causal)</strong><br><span class="text-slate-400">Causal Forests ATE</span></div>
+                <div class="bg-slate-800 p-4 rounded-lg border border-slate-700 text-emerald-400 border-emerald-800"><strong>8. Optimize (RL)</strong><br><span>AI Decision Engine</span></div>
             </div>
         </section>
 
-        <section id="data-integration" class="scroll-mt-28 fade-up">
-            <div class="mb-12 max-w-3xl">
-                <span class="text-blue-600 font-bold tracking-wider text-xs uppercase mb-3 block">Foundational Data</span>
-                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">Data Integration & Pipeline</h2>
-                <p class="text-slate-500 mt-4 text-lg leading-relaxed">
-                    The bedrock of the simulation relies on combining massive multi-source trade pipelines spanning over 20 years.
-                </p>
-            </div>
-
-            <div class="grid lg:grid-cols-2 gap-8 mb-12">
-                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm hover:shadow-lg transition-shadow duration-300">
-                    <h3 class="font-bold text-slate-900 mb-6 text-xl">Raw Datasets Used</h3>
-                    <ul class="space-y-4">
-                        <li class="flex items-start gap-4 p-3 rounded-xl hover:bg-slate-50 transition-colors"><span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1.5 rounded-lg shrink-0 w-28 text-center">WTO / WITS</span> <span class="text-sm text-slate-600 pt-1">Tariff schedules, NTM full databases.</span></li>
-                        <li class="flex items-start gap-4 p-3 rounded-xl hover:bg-slate-50 transition-colors"><span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1.5 rounded-lg shrink-0 w-28 text-center">UN Comtrade</span> <span class="text-sm text-slate-600 pt-1">Bilateral gravity models & HS2 volumes.</span></li>
-                        <li class="flex items-start gap-4 p-3 rounded-xl hover:bg-slate-50 transition-colors"><span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1.5 rounded-lg shrink-0 w-28 text-center">OECD ICIO</span> <span class="text-sm text-slate-600 pt-1">Upstream FVA, Global Value Chain participation.</span></li>
-                        <li class="flex items-start gap-4 p-3 rounded-xl hover:bg-slate-50 transition-colors"><span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1.5 rounded-lg shrink-0 w-28 text-center">WIOD</span> <span class="text-sm text-slate-600 pt-1">Sectoral employment, Value Added metrics.</span></li>
-                        <li class="flex items-start gap-4 p-3 rounded-xl hover:bg-slate-50 transition-colors"><span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1.5 rounded-lg shrink-0 w-28 text-center">Supply Graph</span> <span class="text-sm text-slate-600 pt-1">Heterogeneous network node arrays.</span></li>
-                    </ul>
-                </div>
-                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm hover:shadow-lg transition-shadow duration-300 flex flex-col justify-center">
-                    <h3 class="font-bold text-slate-900 mb-6 text-xl">How we merged them</h3>
-                    <div class="space-y-6">
-                        <div class="flex gap-4">
-                            <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold shrink-0">→</div> 
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-sm">Standardizing Country Names</h4>
-                                <p class="text-sm text-slate-500 mt-1">Aligned ISO-3 codes across the databases.</p>
-                            </div>
-                        </div>
-                        <div class="flex gap-4">
-                            <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold shrink-0">→</div> 
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-sm">Aligning Sector Codes</h4>
-                                <p class="text-sm text-slate-500 mt-1">Cross-mapped HS2 (Comtrade) product vectors with ISIC Revision 4 (OECD) industrial classifications.</p>
-                            </div>
-                        </div>
-                        <div class="flex gap-4">
-                            <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold shrink-0">→</div> 
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-sm">Creating Panel Dataset</h4>
-                                <p class="text-sm text-slate-500 mt-1">Grouped temporal data into unique <code>(Country, Sector, Year)</code> rows allowing unified predictive modeling.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm">
-                <div class="bg-slate-50/80 px-6 sm:px-8 py-5 border-b border-slate-200 flex items-center justify-between">
-                    <h3 class="font-bold text-slate-800">Sample: Top 10 Rows of Panel Dataset <span class="text-slate-400 font-normal ml-2 text-sm">(merged_data.csv)</span></h3>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left whitespace-nowrap text-sm">
-                        <thead class="bg-white border-b border-slate-100 text-slate-500 text-xs uppercase tracking-wider font-semibold">
-                            <tr>
-                                <th class="px-6 py-4">country</th>
-                                <th class="px-6 py-4">sector</th>
-                                <th class="px-6 py-4">year</th>
-                                <th class="px-6 py-4">trade_volume</th>
-                                <th class="px-6 py-4">tariff_rate</th>
-                                <th class="px-6 py-4">out_degree_centrality</th>
-                                <th class="px-6 py-4">in_degree_centrality</th>
-                                <th class="px-6 py-4">dependency_ratio</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-50 text-slate-600 font-medium">
-                            <tr class="hover:bg-slate-50 transition-colors"><td class="px-6 py-3 text-slate-800 font-bold">India</td><td class="px-6 py-3">Auto</td><td class="px-6 py-3 text-slate-400">2021</td><td class="px-6 py-3 font-mono text-blue-600">632.1</td><td class="px-6 py-3">12.5</td><td class="px-6 py-3">5.84</td><td class="px-6 py-3">3.12</td><td class="px-6 py-3">0.72</td></tr>
-                            <tr class="hover:bg-slate-50 transition-colors"><td class="px-6 py-3 text-slate-800 font-bold">India</td><td class="px-6 py-3">Pharma</td><td class="px-6 py-3 text-slate-400">2021</td><td class="px-6 py-3 font-mono text-blue-600">495.9</td><td class="px-6 py-3">8.1</td><td class="px-6 py-3">6.50</td><td class="px-6 py-3">2.44</td><td class="px-6 py-3">0.45</td></tr>
-                            <tr class="hover:bg-slate-50 transition-colors"><td class="px-6 py-3 text-slate-800 font-bold">India</td><td class="px-6 py-3">Textiles</td><td class="px-6 py-3 text-slate-400">2021</td><td class="px-6 py-3 font-mono text-blue-600">812.4</td><td class="px-6 py-3">15.2</td><td class="px-6 py-3">4.33</td><td class="px-6 py-3">1.10</td><td class="px-6 py-3">0.61</td></tr>
-                            <tr class="hover:bg-slate-50 transition-colors"><td class="px-6 py-3 text-slate-800 font-bold">India</td><td class="px-6 py-3">Minerals</td><td class="px-6 py-3 text-slate-400">2021</td><td class="px-6 py-3 font-mono text-blue-600">102.5</td><td class="px-6 py-3">4.5</td><td class="px-6 py-3">2.11</td><td class="px-6 py-3">5.98</td><td class="px-6 py-3">0.88</td></tr>
-                            <tr class="hover:bg-slate-50 transition-colors"><td class="px-6 py-3 text-slate-800 font-bold">India</td><td class="px-6 py-3">Electronics</td><td class="px-6 py-3 text-slate-400">2021</td><td class="px-6 py-3 font-mono text-blue-600">345.8</td><td class="px-6 py-3">9.8</td><td class="px-6 py-3">3.50</td><td class="px-6 py-3">7.42</td><td class="px-6 py-3">0.91</td></tr>
-                            <tr class="hover:bg-slate-50 transition-colors"><td class="px-6 py-3 text-slate-800 font-bold">India</td><td class="px-6 py-3">Auto</td><td class="px-6 py-3 text-slate-400">2022</td><td class="px-6 py-3 font-mono text-blue-600">650.3</td><td class="px-6 py-3">12.0</td><td class="px-6 py-3">5.90</td><td class="px-6 py-3">3.15</td><td class="px-6 py-3">0.70</td></tr>
-                            <tr class="hover:bg-slate-50 transition-colors"><td class="px-6 py-3 text-slate-800 font-bold">India</td><td class="px-6 py-3">Pharma</td><td class="px-6 py-3 text-slate-400">2022</td><td class="px-6 py-3 font-mono text-blue-600">510.4</td><td class="px-6 py-3">8.1</td><td class="px-6 py-3">6.70</td><td class="px-6 py-3">2.50</td><td class="px-6 py-3">0.43</td></tr>
-                            <tr class="hover:bg-slate-50 transition-colors"><td class="px-6 py-3 text-slate-800 font-bold">India</td><td class="px-6 py-3">Textiles</td><td class="px-6 py-3 text-slate-400">2022</td><td class="px-6 py-3 font-mono text-blue-600">801.1</td><td class="px-6 py-3">15.0</td><td class="px-6 py-3">4.40</td><td class="px-6 py-3">1.12</td><td class="px-6 py-3">0.63</td></tr>
-                            <tr class="hover:bg-slate-50 transition-colors"><td class="px-6 py-3 text-slate-800 font-bold">India</td><td class="px-6 py-3">Minerals</td><td class="px-6 py-3 text-slate-400">2022</td><td class="px-6 py-3 font-mono text-blue-600">110.2</td><td class="px-6 py-3">4.5</td><td class="px-6 py-3">2.15</td><td class="px-6 py-3">6.10</td><td class="px-6 py-3">0.85</td></tr>
-                            <tr class="hover:bg-slate-50 transition-colors"><td class="px-6 py-3 text-slate-800 font-bold">India</td><td class="px-6 py-3">Electronics</td><td class="px-6 py-3 text-slate-400">2022</td><td class="px-6 py-3 font-mono text-blue-600">380.0</td><td class="px-6 py-3">9.5</td><td class="px-6 py-3">3.65</td><td class="px-6 py-3">7.55</td><td class="px-6 py-3">0.90</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="mt-8 bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                <h4 class="font-bold text-slate-800 mb-5 text-lg flex items-center gap-2">
-                    <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    Feature Explanations (What the columns mean)
-                </h4>
-                <div class="grid md:grid-cols-2 gap-x-12 gap-y-4 text-sm text-slate-600">
-                    <div class="flex flex-col border-b border-slate-100 pb-2 md:border-none md:pb-0"><strong class="text-slate-900 mb-1">country / sector / year:</strong> Primary geographic, industrial, and temporal index constraints.</div>
-                    <div class="flex flex-col border-b border-slate-100 pb-2 md:border-none md:pb-0"><strong class="text-slate-900 mb-1">trade_volume:</strong> The scaled target variable (in millions USD) representing exports.</div>
-                    <div class="flex flex-col border-b border-slate-100 pb-2 md:border-none md:pb-0"><strong class="text-slate-900 mb-1">tariff_rate:</strong> The exact ad valorem percentage applied to goods crossing borders.</div>
-                    <div class="flex flex-col border-b border-slate-100 pb-2 md:border-none md:pb-0"><strong class="text-slate-900 mb-1">out_degree_centrality:</strong> Global network connectivity mapping how many external hub points a sector exports to.</div>
-                    <div class="flex flex-col border-b border-slate-100 pb-2 md:border-none md:pb-0"><strong class="text-slate-900 mb-1">in_degree_centrality:</strong> Global network connectivity mapping imported dependency links.</div>
-                    <div class="flex flex-col"><strong class="text-slate-900 mb-1">dependency_ratio:</strong> Ratio showing reliance on foreign inputs vs domestic generation.</div>
-                </div>
-            </div>
-
-        </section>
-
-        <section id="lstm" class="scroll-mt-28 fade-up pt-10">
-            <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-                <div class="order-2 lg:order-1 space-y-8">
-                    <div>
-                        <span class="text-indigo-600 font-bold tracking-wider text-xs uppercase mb-3 block">Time Series Analysis</span>
-                        <h2 class="text-3xl md:text-4xl font-extrabold mb-5 text-slate-900 tracking-tight">LSTM: Forecasting the Trade Crash Dynamics</h2>
-                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-bold uppercase tracking-wide mb-6">
-                            <div class="w-1.5 h-1.5 rounded-full bg-indigo-500"></div> How this connects to RQ1
-                        </div>
-                        <p class="text-slate-600 text-lg leading-relaxed">
-                            To answer <strong>RQ1 (Impact Assessment)</strong>, standard snapshot models are insufficient. LSTM <strong>captures time dynamics</strong>, establishing the exact decay trajectory of exports over rolling temporal windows. It proves the structural deterioration continuously.
-                        </p>
-                    </div>
-
-                    <div class="bg-white border-l-4 border-indigo-500 shadow-md rounded-r-2xl p-6 relative overflow-hidden">
-                        <div class="absolute -right-4 -top-4 text-indigo-50 opacity-50">
-                            <svg class="w-24 h-24" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
-                        </div>
-                        <h4 class="font-bold text-slate-900 mb-2 relative z-10 uppercase tracking-wide text-sm">Model Execution</h4>
-                        <p class="text-slate-600 text-sm leading-relaxed relative z-10">
-                            We trained a Long Short-Term Memory PyTorch network to extrapolate crash momentum. The red trajectory demonstrates that trade decays continually post-shock without bounce back.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="order-1 lg:order-2 space-y-6">
-                    <div class="bg-white p-2 sm:p-4 rounded-3xl border border-slate-200 shadow-lg img-container">
-                        <div class="bg-slate-50 rounded-2xl overflow-hidden flex items-center justify-center relative">
-                            <img src="../Explainability/07_lstm_forecast.png" alt="LSTM Time Series Forecast" loading="lazy" class="zoom-img w-full h-auto object-cover min-h-[250px] sm:min-h-[350px]" onerror="this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22800%22 height=%22400%22 viewBox=%220 0 800 400%22%3E%3Crect fill=%22%23f1f5f9%22 width=%22800%22 height=%22400%22/%3E%3Ctext fill=%22%2394a3b8%22 font-family=%22sans-serif%22 font-size=%2224%22 dy=%2210.5%22 font-weight=%22bold%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22%3ELSTM Forecast Graph Missing%3C/text%3E%3C/svg%3E';" />
-                        </div>
-                    </div>
-                    <div class="text-sm p-5 bg-white shadow-sm rounded-2xl border border-slate-200 text-slate-600 flex items-start gap-3">
-                        <svg class="w-5 h-5 text-indigo-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <div>
-                            <p class="mb-1"><strong>What the graph shows:</strong> It contrasts generic historical export baseline vs the predicted LSTM crash volume mapped out sequentially.</p>
-                            <p class="mb-1"><strong>Why it matters:</strong> It reveals the 'momentum' of the crash. Network damage doesn't heal instantly.</p>
-                            <p><strong>Insight:</strong> The crash trajectory is non-linear—the initial shock drops volume heavily, then creates a lasting depression.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="xgboost" class="scroll-mt-28 fade-up pt-10">
-            <div class="mb-12 max-w-3xl mx-auto text-center">
-                <span class="text-orange-500 font-bold tracking-wider text-xs uppercase mb-3 block">Predictive Machine Learning</span>
-                <h2 class="text-3xl md:text-4xl font-extrabold mb-5 text-slate-900 tracking-tight">XGBoost: Predicting Total Volume Loss</h2>
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-orange-50 border border-orange-100 text-orange-700 text-xs font-bold uppercase tracking-wide mb-6 mx-auto">
-                    <div class="w-1.5 h-1.5 rounded-full bg-orange-500"></div> How this connects to RQ1
-                </div>
-                <p class="text-slate-600 text-lg leading-relaxed">
-                    Answering <strong>RQ1</strong> quantitatively: The XGBoost Regressor directly <strong>predicts trade loss</strong> based on tariff shifts and structural parameters. It correlates specific input degradation (the shock) to an exact modeled output (trade loss).
-                </p>
-            </div>
-
-            <div class="grid lg:grid-cols-2 gap-8 lg:gap-12">
-                <div class="flex flex-col">
-                    <div class="bg-white p-2 sm:p-4 rounded-3xl border border-slate-200 shadow-lg img-container mb-6 flex-grow flex flex-col justify-center">
-                        <img src="../Explainability/01_xgboost_actual_vs_predicted.png" alt="XGBoost Actual vs Predicted" loading="lazy" class="zoom-img w-full h-auto rounded-2xl bg-slate-50 min-h-[250px]" onerror="this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22 viewBox=%220 0 600 400%22%3E%3Crect fill=%22%23f1f5f9%22 width=%22600%22 height=%22400%22/%3E%3Ctext fill=%22%2394a3b8%22 font-family=%22sans-serif%22 font-size=%2220%22 dy=%2210.5%22 font-weight=%22bold%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22%3EActual vs Predicted Graph%3C/text%3E%3C/svg%3E';" />
-                    </div>
-                    <div class="text-sm p-6 bg-white shadow-sm rounded-2xl border border-slate-200 text-slate-600">
-                        <p class="mb-1"><strong>What the graph shows:</strong> Actual validation values vs model predicted losses.</p>
-                        <p class="mb-3"><strong>Why it matters:</strong> Validates model reliability on historical data.</p>
-                        <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 text-slate-700">
-                            <strong>Insight:</strong> The cluster tightness along the center line verifies that the ML model reliably projects the scope of trade displacement.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex flex-col">
-                    <div class="bg-white p-2 sm:p-4 rounded-3xl border border-slate-200 shadow-lg img-container mb-6 flex-grow flex flex-col justify-center">
-                        <img src="../Explainability/02_xgboost_feature_importance.png" alt="XGBoost Feature Importance" loading="lazy" class="zoom-img w-full h-auto rounded-2xl bg-slate-50 min-h-[250px]" onerror="this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22 viewBox=%220 0 600 400%22%3E%3Crect fill=%22%23f1f5f9%22 width=%22600%22 height=%22400%22/%3E%3Ctext fill=%22%2394a3b8%22 font-family=%22sans-serif%22 font-size=%2220%22 dy=%2210.5%22 font-weight=%22bold%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22%3EFeature Importance Graph%3C/text%3E%3C/svg%3E';" />
-                    </div>
-                    <div class="bg-white border-l-4 border-orange-500 shadow-md rounded-r-2xl p-6 relative overflow-hidden text-slate-600 text-sm">
-                        <h4 class="font-bold text-slate-900 mb-2 relative z-10">Data Insights: XGBoost Correlation</h4>
-                        <p class="mb-1"><strong>What the graph shows:</strong> F-score chart ranking features driving predictions.</p>
-                        <p class="mb-3"><strong>Why it matters:</strong> Reveals the top levers driving trade values.</p>
-                        <p class="relative z-10 bg-orange-50 p-3 rounded-lg border border-orange-100 text-orange-900">
-                            <strong>Insight:</strong> Centrality algorithms play an immensely disproportionate role compared to localized manufacturing costs in maintaining export volume.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="shap" class="scroll-mt-28 fade-up pt-10">
-            <div class="mb-12 max-w-3xl">
-                <span class="text-purple-600 font-bold tracking-wider text-xs uppercase mb-3 block">Explainable AI (XAI)</span>
-                <h2 class="text-3xl md:text-4xl font-extrabold mb-5 text-slate-900 tracking-tight">Interpreting the Drivers</h2>
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-purple-50 border border-purple-100 text-purple-700 text-xs font-bold uppercase tracking-wide mb-6">
-                    <div class="w-1.5 h-1.5 rounded-full bg-purple-500"></div> How this connects to RQ1
-                </div>
-                <p class="text-slate-600 text-lg leading-relaxed">
-                    SHAP <strong>strengthens RQ1</strong> by mathematically explaining <strong>WHY</strong> the AI predicted massive failures. It transitions the simulation from a 'black box' output to a transparent cause analysis.
-                </p>
-            </div>
-
-            <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-                
-                <div class="space-y-6">
-                    <div class="bg-white p-2 sm:p-4 rounded-3xl border border-slate-200 shadow-lg img-container">
-                        <img src="../Explainability/03_shap_bar_plot.png" alt="SHAP Mean Impact" class="zoom-img rounded-2xl w-full h-auto bg-slate-50 min-h-[250px]" loading="lazy" onerror="this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22 viewBox=%220 0 600 400%22%3E%3Crect fill=%22%23f1f5f9%22 width=%22600%22 height=%22400%22/%3E%3Ctext fill=%22%2394a3b8%22 font-family=%22sans-serif%22 font-size=%2220%22 dy=%2210.5%22 font-weight=%22bold%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22%3ESHAP Bar Plot%3C/text%3E%3C/svg%3E';" />
-                    </div>
-                    <div class="text-sm p-6 bg-white shadow-sm rounded-2xl border border-slate-200 text-slate-600">
-                        <p><strong>What the graph shows:</strong> Global feature relevance across the entire dataset via mean(|SHAP|).</p>
-                        <p class="mt-2"><strong>Why it matters:</strong> Definitively isolates structural weaknesses versus raw numeric volume.</p>
-                    </div>
-                </div>
-
-                <div class="space-y-6 lg:mt-0 mt-12">
-                     <div class="bg-white p-2 sm:p-4 rounded-3xl border border-slate-200 shadow-lg img-container">
-                        <img src="../Explainability/04_shap_summary_plot.png" alt="SHAP Summary Plot" class="zoom-img rounded-2xl w-full h-auto bg-slate-50 min-h-[250px]" loading="lazy" onerror="this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22 viewBox=%220 0 600 400%22%3E%3Crect fill=%22%23f1f5f9%22 width=%22600%22 height=%22400%22/%3E%3Ctext fill=%22%2394a3b8%22 font-family=%22sans-serif%22 font-size=%2220%22 dy=%2210.5%22 font-weight=%22bold%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22%3ESHAP Summary Plot%3C/text%3E%3C/svg%3E';" />
-                    </div>
-                     
-                    <div class="bg-purple-50 border border-purple-200 p-6 rounded-2xl text-purple-900 shadow-sm">
-                        <h4 class="font-bold mb-2">Data Insights: Feature Importance in Words</h4>
-                        <p class="text-sm leading-relaxed">
-                            <strong>Insight:</strong> The SHAP beeswarm plot shows that as Out-Degree Centrality values plunge (blue dots), the SHAP impact value turns highly negative on predictions. It explicitly confirms that losing structural bridges connecting India to the trans-Atlantic network destroys exports far faster than raw tariff spikes alone.
-                        </p>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-        <section id="gcn" class="scroll-mt-28 fade-up pt-10">
-            <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-                 <div class="order-2 lg:order-last space-y-8">
-                    <div>
-                        <span class="text-pink-600 font-bold tracking-wider text-xs uppercase mb-3 block">Graph Theory & Physics</span>
-                        <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-5 tracking-tight">GNN Validation</h2>
-                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-pink-50 border border-pink-100 text-pink-700 text-xs font-bold uppercase tracking-wide mb-6">
-                            <div class="w-1.5 h-1.5 rounded-full bg-pink-500"></div> How this connects to RQ1
-                        </div>
-                        <p class="text-slate-600 text-lg leading-relaxed">
-                            A PyTorch Graph Convolutional Network <strong>validates structural damage</strong>, firmly cementing <strong>RQ1</strong>. It translates economic loss into raw physical network physics, calculating geometrical embedding shifts.
-                        </p>
-                    </div>
-
-                    <div class="bg-pink-50 border border-pink-200 p-6 rounded-2xl text-pink-900 shadow-sm">
-                        <h4 class="font-bold mb-2">Data Insights: Embedding Shift Meaning</h4>
-                        <p class="text-sm leading-relaxed mb-3">
-                            <strong>What does an "L2 Shift" mean?</strong> An L2 Embedding shift measures how violently a node (sector) is displaced in the high-dimensional latent space after graph edges are severed.
-                        </p>
-                        <p class="text-sm leading-relaxed">
-                            <strong>Insight:</strong> Nodes like Textiles and Auto experienced massive displacement (L2 Shifts > 50). This verifies our thesis that Trade Diversion acts as a physical deformation of supply chain geometry, confirming network repair is mandatory rather than optional.
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="order-1 space-y-6">
-                    <div class="bg-white p-2 sm:p-4 rounded-3xl border border-slate-200 shadow-lg img-container">
-                        <img src="../Explainability/gnn_shock_propagation.png" alt="GNN Shock Propagation" class="zoom-img rounded-2xl w-full h-auto bg-slate-50 min-h-[250px] sm:min-h-[350px] object-cover" loading="lazy" onerror="this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22500%22 viewBox=%220 0 600 500%22%3E%3Crect fill=%22%23f1f5f9%22 width=%22600%22 height=%22500%22/%3E%3Ctext fill=%22%2394a3b8%22 font-family=%22sans-serif%22 font-size=%2220%22 dy=%2210.5%22 font-weight=%22bold%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22%3EGNN Shock Graph%3C/text%3E%3C/svg%3E';" />
-                    </div>
-                    <div class="text-sm p-5 bg-white shadow-sm rounded-2xl border border-slate-200 text-slate-600 flex items-start gap-3">
-                        <svg class="w-5 h-5 text-pink-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <div>
-                            <p class="mb-1"><strong>What the graph shows:</strong> Pre- vs Post-shock coordinate differences for sectoral nodes.</p>
-                            <p><strong>Why it matters:</strong> Confirms vulnerability isn't just about price, but location in the graph framework.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="causal" class="scroll-mt-28 fade-up pt-10">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <span class="text-cyan-600 font-bold tracking-wider text-xs uppercase mb-3 block">Causal Inference</span>
-                <h2 class="text-3xl md:text-5xl font-extrabold mb-5 text-slate-900 tracking-tight">Causal Forests: Testing Interventions</h2>
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-cyan-50 border border-cyan-100 text-cyan-700 text-xs font-bold uppercase tracking-wide mb-6 mx-auto">
-                    <div class="w-1.5 h-1.5 rounded-full bg-cyan-500"></div> How this connects to RQ2
-                </div>
-                <p class="text-slate-600 text-lg leading-relaxed">
-                    <strong>RQ2 focuses on Policy Interventions.</strong> Our Random Forest T-Learner <strong>checks policy effectiveness</strong> devoid of statistical bias. Did throwing money at the problem *actually* cause a recovery, or was it just correlation? Causal Forests isolate the absolute Average Treatment Effect (ATE).
-                </p>
-            </div>
-
-            <div class="bg-white p-2 sm:p-4 rounded-3xl border border-slate-200 shadow-lg img-container max-w-4xl mx-auto mb-8">
-                <img src="../Explainability/08_causal_treatment_effect.png" alt="Causal Treatment Effects" loading="lazy" class="zoom-img rounded-2xl w-full h-auto bg-slate-50 min-h-[300px]" onerror="this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22800%22 height=%22350%22 viewBox=%220 0 800 350%22%3E%3Crect fill=%22%23f1f5f9%22 width=%22800%22 height=%22350%22/%3E%3Ctext fill=%22%2394a3b8%22 font-family=%22sans-serif%22 font-size=%2224%22 dy=%2210.5%22 font-weight=%22bold%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22%3ECausal Forest Distribution Plot%3C/text%3E%3C/svg%3E';" />
-            </div>
-            
-            <div class="max-w-4xl mx-auto text-sm p-6 mb-12 bg-white shadow-sm rounded-2xl border border-slate-200 text-center text-slate-600">
-                <p class="mb-1"><strong>What the graph shows:</strong> The causal distribution of individual treatment effects.</p>
-                <p class="mb-3"><strong>Why it matters:</strong> Mathematically untangles "treatments" (subsidies vs FTAs) from mere correlation backgrounds.</p>
-                <div class="inline-block bg-cyan-50 text-cyan-800 px-4 py-2 rounded-lg font-medium border border-cyan-100">
-                    <strong>Insight:</strong> The ATE distribution proves categorically that new FTAs physically restore network metrics far better than cash injections alone.
-                </div>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                <div class="bg-white rounded-3xl p-8 border-t-4 border-t-amber-500 border-x border-b border-slate-200 shadow-md hover:shadow-xl transition-shadow duration-300">
-                    <div class="text-[10px] font-black text-slate-400 mb-3 uppercase tracking-widest bg-slate-50 inline-block px-2 py-1 rounded">Treatment 1</div>
-                    <div class="text-2xl font-bold text-slate-900 mb-2">PLI Subsidies</div>
-                    <div class="flex items-baseline gap-2 mb-6">
-                        <div class="text-5xl font-extrabold text-amber-500 tracking-tighter">~19.5</div>
-                        <div class="text-lg text-amber-500/60 font-medium">ATE</div>
-                    </div>
-                    <p class="text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
-                        <strong class="text-amber-600 block mb-1">Weak causal recovery.</strong> 
-                        Cash grants do not fix severed trans-national network routes. They only provide localized temporary relief.
-                    </p>
-                </div>
-                
-                <div class="bg-white rounded-3xl p-8 border-t-4 border-t-emerald-500 border-x border-b border-slate-200 shadow-md hover:shadow-xl transition-shadow duration-300">
-                    <div class="text-[10px] font-black text-slate-400 mb-3 uppercase tracking-widest bg-slate-50 inline-block px-2 py-1 rounded">Treatment 2</div>
-                    <div class="text-2xl font-bold text-slate-900 mb-2">Alternative FTAs</div>
-                    <div class="flex items-baseline gap-2 mb-6">
-                        <div class="text-5xl font-extrabold text-emerald-500 tracking-tighter">~75.1</div>
-                        <div class="text-lg text-emerald-500/60 font-medium">ATE</div>
-                    </div>
-                    <p class="text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
-                        <strong class="text-emerald-600 block mb-1">Massive causal recovery.</strong> 
-                        Forging new treaties manually restores the torn Out-Degree network edges, rebuilding the global graph securely.
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <section id="rl-opt" class="scroll-mt-28 fade-up pt-10">
-            <div class="bg-slate-950 rounded-[2.5rem] p-8 sm:p-12 lg:p-16 shadow-2xl text-slate-300 relative overflow-hidden">
-                <div class="absolute inset-0 bg-grid-pattern opacity-[0.03]"></div>
-                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-emerald-900/20 rounded-full blur-[100px] z-0"></div>
-
-                <div class="relative z-10 mb-12 lg:w-2/3">
-                    <span class="text-emerald-400 font-bold tracking-wider text-xs uppercase mb-3 block">Autonomous Policymaking</span>
-                    <h2 class="text-3xl md:text-5xl font-extrabold mb-5 text-white tracking-tight">RL Policy Engine</h2>
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-emerald-900/50 border border-emerald-700/50 text-emerald-300 text-xs font-bold uppercase tracking-wide mb-6">
-                        <div class="w-1.5 h-1.5 rounded-full bg-emerald-400"></div> How this connects to RQ3
-                    </div>
-                    <p class="text-slate-400 text-lg leading-relaxed">
-                        <strong>RQ3 (AI Policymaking)</strong> is fulfilled directly. A Proximal Policy Optimization (PPO) agent <strong>finds the best strategy</strong> continuously solving a custom Markov Decision Process over a 10-year constrained budget horizon.
-                    </p>
-                </div>
-
-                <div class="relative z-10 grid lg:grid-cols-2 gap-8 lg:gap-12">
-                    <div class="flex flex-col h-full">
-                        <div class="bg-slate-900/80 p-2 sm:p-4 rounded-3xl border border-slate-800 shadow-2xl img-container mb-6 flex-grow flex flex-col justify-center backdrop-blur-sm">
-                            <img src="../Explainability/05_rl_volume_trajectory.png" alt="RL Volume Trajectory" loading="lazy" class="zoom-img rounded-2xl w-full h-auto opacity-90 hover:opacity-100 transition-opacity bg-slate-800 min-h-[250px]" onerror="this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22 viewBox=%220 0 600 400%22%3E%3Crect fill=%22%231e293b%22 width=%22600%22 height=%22400%22/%3E%3Ctext fill=%22%2364748b%22 font-family=%22sans-serif%22 font-size=%2220%22 dy=%2210.5%22 font-weight=%22bold%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22%3ERL Trajectory Graph%3C/text%3E%3C/svg%3E';" />
-                        </div>
-                        <div class="text-sm text-slate-400 border border-emerald-900/50 bg-slate-900/80 p-6 rounded-2xl backdrop-blur-md">
-                            <p class="mb-1"><strong class="text-slate-200">What it shows:</strong> The RL agent actively rescuing export volumes continuously vs the baseline decay.</p>
-                            <p class="mb-2"><strong class="text-slate-200">Why it matters:</strong> Traces the direct result of dynamic un-biased policy allocation.</p>
-                            <div class="mt-3 pt-3 border-t border-slate-800">
-                                <strong class="text-emerald-400">Insight:</strong> Demonstrates real-time adaptive corrections in dynamic instability.
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col h-full">
-                        <div class="bg-slate-900/80 p-2 sm:p-4 rounded-3xl border border-slate-800 shadow-2xl img-container mb-6 flex-grow flex flex-col justify-center backdrop-blur-sm">
-                            <img src="../Explainability/06_rl_policy_distribution.png" alt="RL Policy Selection" loading="lazy" class="zoom-img rounded-2xl w-full h-auto opacity-90 hover:opacity-100 transition-opacity bg-slate-800 min-h-[250px]" onerror="this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22 viewBox=%220 0 600 400%22%3E%3Crect fill=%22%231e293b%22 width=%22600%22 height=%22400%22/%3E%3Ctext fill=%22%2364748b%22 font-family=%22sans-serif%22 font-size=%2220%22 dy=%2210.5%22 font-weight=%22bold%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22%3ERL Action Distribution%3C/text%3E%3C/svg%3E';" />
-                        </div>
-                        <div class="text-sm text-slate-400 border border-emerald-900/50 bg-slate-900/80 p-6 rounded-2xl backdrop-blur-md">
-                            <p class="mb-1"><strong class="text-slate-200">What it shows:</strong> Histogram of actions executed by the RL algorithm to maximize total horizon reward.</p>
-                            <p class="mb-2"><strong class="text-slate-200">Why it matters:</strong> Reveals the AI's preferred mechanism to win the trade war.</p>
-                            <div class="mt-3 pt-3 border-t border-slate-800">
-                                <strong class="text-emerald-400">Insight:</strong> AI vastly favors Alt FTAs as the optimal long-term strategy globally over pure cash subsidies.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="final-answers" class="scroll-mt-28 fade-up pt-10">
-             <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200/60 rounded-[2.5rem] p-8 sm:p-12 lg:p-16 shadow-xl relative overflow-hidden">
-                <div class="absolute top-0 right-0 bg-blue-600 text-white text-[10px] font-black px-6 py-2 rounded-bl-2xl uppercase tracking-widest shadow-md">Synthesis</div>
-                <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-blue-600/5 rounded-full blur-3xl"></div>
-                
-                <h3 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-12 tracking-tight">FINAL ANSWERS TO RESEARCH QUESTIONS</h3>
-                
-                <div class="space-y-12 relative z-10">
-                    <div class="flex flex-col sm:flex-row gap-6 sm:gap-8 items-start group">
-                        <div class="w-14 h-14 shrink-0 bg-white border border-red-200 text-red-600 rounded-2xl flex items-center justify-center font-black text-2xl shadow-sm group-hover:scale-110 group-hover:border-red-400 transition-all duration-300">1</div>
-                        <div>
-                            <h4 class="text-xl md:text-2xl font-bold text-slate-900 mb-3">RQ1: Impact Assessment & Trade Diversion</h4>
-                            <p class="text-lg text-slate-700 mb-4 font-medium">An EU-USA FTA induces massive Trade Diversion. Rather than merely facing higher prices, India actively suffers a <strong class="text-red-600 bg-red-50 px-2 py-0.5 rounded">Loss of Centrality</strong>.</p>
-                            <ul class="space-y-3 text-slate-600">
-                                <li class="flex items-start gap-3"><svg class="w-5 h-5 text-red-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> <span><strong>Trade Diversion & Centrality:</strong> The AI confirms damage structurally—critical nodes connecting sectors drop severely (`out_degree_centrality`), removing trans-atlantic transit routes.</span></li>
-                                <li class="flex items-start gap-3"><svg class="w-5 h-5 text-red-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> <span><strong>Sector Impact:</strong> High-edge sectors like Auto and Pharma undergo severe L2 positional embedding shifts, forcing them definitively off the global value chain axis.</span></li>
-                            </ul>
-                        </div>
-                    </div>
-                    
-                    <div class="h-px w-full bg-blue-200/50"></div>
-                    
-                    <div class="flex flex-col sm:flex-row gap-6 sm:gap-8 items-start group">
-                        <div class="w-14 h-14 shrink-0 bg-white border border-amber-200 text-amber-600 rounded-2xl flex items-center justify-center font-black text-2xl shadow-sm group-hover:scale-110 group-hover:border-amber-400 transition-all duration-300">2</div>
-                        <div>
-                            <h4 class="text-xl md:text-2xl font-bold text-slate-900 mb-3">RQ2: The Failure of Subsidies & Success of FTAs</h4>
-                            <p class="text-lg text-slate-700 mb-4 font-medium">The AI computed specific counter-measures concluding that financial engineering has severe limits:</p>
-                            <ul class="space-y-3 text-slate-600">
-                                <li class="flex items-start gap-3"><svg class="w-5 h-5 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> <span><strong>Why Subsidies Fail:</strong> PLI subsidies (ATE: 19.5) lower unit prices locally but burn fiscal budget heavily without patching fractured trans-oceanic export route edges.</span></li>
-                                <li class="flex items-start gap-3"><svg class="w-5 h-5 text-emerald-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> <span><strong>Why FTAs Work:</strong> Alternative FTAs (ATE: 75.1) generate immense network elasticity, manually soldering new global graph outward degree branches preventing structural decay.</span></li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="h-px w-full bg-blue-200/50"></div>
-
-                    <div class="flex flex-col sm:flex-row gap-6 sm:gap-8 items-start group">
-                        <div class="w-14 h-14 shrink-0 bg-white border border-emerald-200 text-emerald-600 rounded-2xl flex items-center justify-center font-black text-2xl shadow-sm group-hover:scale-110 group-hover:border-emerald-400 transition-all duration-300">3</div>
-                        <div>
-                            <h4 class="text-xl md:text-2xl font-bold text-slate-900 mb-3">RQ3: AI Pipeline Guiding Policymakers</h4>
-                            <p class="text-lg text-slate-700 mb-4 font-medium"><strong>How AI helps policymakers:</strong> Using Reinforcement Learning natively within a customized Markov Decision Process removes short-term human bias from macro-economics.</p>
-                            <ul class="space-y-3 text-slate-600">
-                                <li class="flex items-start gap-3 bg-white p-4 rounded-xl border border-blue-100 shadow-sm"><svg class="w-5 h-5 text-blue-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> <span>The AI pipeline models outcomes autonomously into the future, reacting securely and dynamically to economic returns, proving AI decision engines can efficiently optimize large-scale capital distribution.</span></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 fade-up pt-10">
-            <section class="bg-white p-8 sm:p-10 rounded-[2rem] border border-slate-200 shadow-sm hover:shadow-lg transition-shadow duration-300">
-                <h3 class="text-2xl font-extrabold text-slate-900 mb-6 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg></div>
-                    Research Contribution
-                </h3>
-                <p class="text-slate-600 leading-relaxed mb-8">
-                    This project contributes by successfully escaping siloed computational environments directly. It combines:
-                </p>
-                <div class="grid grid-cols-2 gap-4 text-sm font-bold text-slate-700 mb-8">
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-center justify-center text-center hover:bg-slate-100 transition-colors">Graph Theory</div>
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-center justify-center text-center hover:bg-slate-100 transition-colors">Machine Learning</div>
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-center justify-center text-center hover:bg-slate-100 transition-colors">Reinforcement Learning</div>
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-center justify-center text-center hover:bg-slate-100 transition-colors">Explainable AI</div>
-                </div>
-                <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-px rounded-xl">
-                    <div class="bg-white rounded-[11px] p-4 text-center">
-                        <p class="text-slate-800 font-bold text-sm">
-                            ... into a completely unified, automated end-to-end policy simulation system.
-                        </p>
-                    </div>
-                </div>
-            </section>
-
-            <section class="bg-white p-8 sm:p-10 rounded-[2rem] border border-slate-200 shadow-sm border-dashed hover:shadow-lg transition-shadow duration-300">
-                <h3 class="text-2xl font-extrabold text-slate-900 mb-6 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg></div>
-                    Limitations & Future Work
-                </h3>
-                <ul class="space-y-6 text-sm text-slate-600">
-                    <li class="flex gap-4 p-4 rounded-xl bg-slate-50 border border-slate-100">
-                        <span class="font-black text-slate-300 text-xl">1</span>
-                        <div><strong class="text-slate-800 block mb-1">Data Assumptions:</strong> Unified panels rely on synthesized imputation for mis-matched time horizons across global WTO/OECD databases.</div>
-                    </li>
-                    <li class="flex gap-4 p-4 rounded-xl bg-slate-50 border border-slate-100">
-                        <span class="font-black text-slate-300 text-xl">2</span>
-                        <div><strong class="text-slate-800 block mb-1">Simplified RL Environment:</strong> The Custom Gymnasium MDP abstracts geopolitical friction costs (e.g. strict negotiation time for FTAs) into a static penalty variable.</div>
-                    </li>
-                    <li class="flex gap-4 p-4 rounded-xl bg-slate-50 border border-slate-100">
-                        <span class="font-black text-slate-300 text-xl">3</span>
-                        <div><strong class="text-slate-800 block mb-1">Possible Real-World Extensions:</strong> Future iterations could integrate Live-LLM agent negotiators directly inside the Multi-Agent RL environments to parameterize treaty probabilities dynamically instead of statically.</div>
-                    </li>
-                </ul>
-            </section>
+        <div class="text-center pt-8">
+            <a href="data.html" class="inline-block bg-slate-900 text-white font-bold py-4 px-8 rounded-xl hover:bg-slate-800 transition">Next: See How We Built The Data Engine &rarr;</a>
         </div>
-
     </main>
-    
-    <footer class="border-t border-slate-200 bg-white pt-16 pb-8 mt-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center">
-            <div class="font-bold text-slate-900 tracking-tight flex items-center gap-2 mb-6 text-2xl">
-                <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg shadow-sm flex items-center justify-center">
-                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                </div>
-                Trade<span class="text-blue-600">Sim</span>
-            </div>
-            
-            <p class="text-slate-500 font-medium leading-relaxed max-w-xl mx-auto mb-6">
+
+    <footer class="border-t border-slate-200 bg-white py-12 text-center mt-16">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-blue-600 font-bold text-xl mb-4 tracking-tight">TradeSim</div>
+            <p class="text-slate-500 text-sm font-medium leading-relaxed max-w-xl mx-auto">
                 AI-Enabled Policy Simulation System &copy; 2026<br>
-                <span class="text-slate-400 font-normal mt-1 inline-block">An End-to-End Research Objective Solver</span>
+                <span class="text-slate-400 font-normal mt-1 inline-block">Developed by Sajal Garg (IIT2023035)</span>
             </p>
-            
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm mb-12">
-                <div class="bg-slate-50 px-4 py-2 rounded-full border border-slate-200 text-slate-600">
-                    Developed by <strong class="text-slate-900">Sajal Garg</strong> (IIT2023035)
-                </div>
-                <div class="bg-slate-50 px-4 py-2 rounded-full border border-slate-200 text-slate-600">
-                    B.Tech Project, 6th Semester
-                </div>
-            </div>
         </div>
     </footer>
-
-    <script>
-        // Mobile Menu Toggle
-        const btn = document.getElementById('mobile-menu-btn');
-        const menu = document.getElementById('mobile-menu');
-        const icon = document.getElementById('menu-icon');
-
-        btn.addEventListener('click', () => {
-            menu.classList.toggle('hidden');
-            if (menu.classList.contains('hidden')) {
-                icon.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
-            } else {
-                icon.setAttribute('d', 'M6 18L18 6M6 6l12 12');
-            }
-        });
-
-        // Close mobile menu on link click
-        document.querySelectorAll('.mobile-link').forEach(link => {
-            link.addEventListener('click', () => {
-                menu.classList.add('hidden');
-                icon.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
-            });
-        });
-
-        // Scroll animations (Intersection Observer)
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.1
-        };
-
-        const observer = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.fade-up').forEach((el) => {
-            observer.observe(el);
-        });
-
-        // Navbar blur effect on scroll
-        window.addEventListener('scroll', () => {
-            const nav = document.getElementById('navbar');
-            if (window.scrollY > 10) {
-                nav.classList.add('shadow-sm', 'bg-white/80', 'backdrop-blur-lg');
-                nav.classList.remove('bg-white/0', 'border-transparent');
-            } else {
-                nav.classList.remove('shadow-sm', 'bg-white/80', 'backdrop-blur-lg');
-                nav.classList.add('bg-white/0', 'border-transparent');
-            }
-        });
-    </script>
 </body>
 </html>

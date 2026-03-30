@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autonomous Policy Engine | AI Policy Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .bg-grid { background-size: 24px 24px; background-image: linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px); }
+        .zoom-img { transition: transform 0.3s ease; }
+        .zoom-img:hover { transform: scale(1.02); }
+    </style>
+</head>
+<body class="text-slate-800 antialiased pt-16">
+
+    <nav class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm transition-all">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="index.html" class="font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                <div class="w-6 h-6 bg-blue-600 rounded-md"></div>
+                Trade<span class="text-blue-600">Sim</span>
+            </a>
+            <div class="hidden lg:flex space-x-6 text-sm font-medium text-slate-600">
+                <a href="index.html" class="hover:text-blue-600 transition-colors">1. The Problem</a>
+                <a href="data.html" class="hover:text-blue-600 transition-colors">2. Data Pipeline</a>
+                <a href="ai_models.html" class="hover:text-blue-600 transition-colors">3. AI & Forecasting</a>
+                <a href="policy_engine.html" class="hover:text-blue-600 transition-colors">4. Policy Engine</a>
+            </div>
+            <!-- Mobile Menu Button could go here -->
+        </div>
+    </nav>
+
+
+    <header class="bg-emerald-900 text-white py-16">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <h1 class="text-4xl font-extrabold mb-4">Fixing the Future</h1>
+            <p class="text-xl text-emerald-200">Causal Forests and Reinforcement Learning determining the ultimate strategy.</p>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-6 py-16 space-y-20">
+        
+        <!-- Causal Forests -->
+        <section>
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold mb-4">Solving Research Question 2: Testing Treatments</h2>
+                <p class="text-lg text-slate-600 max-w-2xl mx-auto">Before we deploy an AI to run the country's economy, we must independently verify if the tools the government has actually work. We used <strong>Causal Forests</strong> to find the Average Treatment Effect (ATE).</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <div class="bg-amber-50 p-8 rounded-2xl border border-amber-200 shadow-sm">
+                    <h3 class="text-2xl font-bold text-amber-900 mb-2">Option A: Subsidies</h3>
+                    <p class="text-amber-800 mb-6">Throwing cash grants (like PLI schemes) at domestic factories to temporarily lower prices.</p>
+                    <div class="text-4xl font-black text-amber-600 mb-2">19.5 <span class="text-lg font-normal">ATE</span></div>
+                    <p class="text-sm font-bold text-amber-900">Result: Fails.</p>
+                    <p class="text-sm text-amber-800 mt-2">Cash provides localized relief but completely fails to rebuild broken international transit routes. When money runs out, the sector dies anyway.</p>
+                </div>
+
+                <div class="bg-emerald-50 p-8 rounded-2xl border border-emerald-200 shadow-sm">
+                    <h3 class="text-2xl font-bold text-emerald-900 mb-2">Option B: Draft New Treaties</h3>
+                    <p class="text-emerald-800 mb-6">Forging Alternative FTAs with other developing nations (e.g., ASEAN, UAE) to rebuild the broken hubs.</p>
+                    <div class="text-4xl font-black text-emerald-600 mb-2">75.1 <span class="text-lg font-normal">ATE</span></div>
+                    <p class="text-sm font-bold text-emerald-900">Result: Massive Success.</p>
+                    <p class="text-sm text-emerald-800 mt-2">This manually solders new global network bridges. It mathematically restores structural elasticity.</p>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                 <img src="./images/08_causal_treatment_effect.png" alt="Causal Treatment Effects" class="w-full max-w-2xl mx-auto rounded-lg shadow-md zoom-img" loading="lazy">
+                 <p class="mt-4 text-sm text-slate-500">Visual mapping of the vast disparity in causal recovery effectiveness.</p>
+            </div>
+        </section>
+
+        <hr class="border-slate-200">
+
+        <!-- RL -->
+        <section class="bg-slate-900 text-white p-8 md:p-12 rounded-3xl shadow-xl">
+            <h2 class="text-3xl font-extrabold mb-6">The AI Boss: Reinforcement Learning (RL) Engine</h2>
+            <p class="text-slate-300 text-lg mb-8 leading-relaxed">
+                Knowing what works isn't enough; when managing an economy over 10 years with a strict budget, timing is everything. We trained an autonomous <strong>Proximal Policy Optimization (PPO)</strong> Agent. The agent plays the role of the government. Its goal: get export volumes back up without bankrupting the treasury.
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                     <img src="./images/05_rl_volume_trajectory.png" alt="RL Volume Trajectory" class="w-full h-auto rounded-xl zoom-img border border-slate-700" loading="lazy">
+                     <p class="mt-3 text-sm text-slate-400"><strong>The Save:</strong> The agent successfully halts the crash (red curve) and actively re-accelerates output year-over-year into positive territory (blue curve).</p>
+                </div>
+                <div>
+                     <img src="./images/06_rl_policy_distribution.png" alt="RL Policy Selection" class="w-full h-auto rounded-xl zoom-img border border-slate-700" loading="lazy">
+                     <p class="mt-3 text-sm text-slate-400"><strong>The Decisions:</strong> Removing human bias, the AI discovers that maximizing long-term survival requires heavily prioritizing 'Alt FTAs' directly over raw cash subsidies.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Conclusion -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-extrabold text-slate-900 mb-8 border-b-2 border-slate-200 pb-4">Final Conclusion</h2>
+            <div class="prose prose-lg text-slate-700 max-w-none">
+                <p>This project proves that the damage from major global trade shocks is <strong>structural, not just financial</strong>.</p>
+                <p>When the system predicted massive drops using the <strong>XGBoost and LSTM</strong> engines, <strong>SHAP and Graph Neural Networks</strong> confirmed that the primary cause wasn't just "higher transport costs," but the literal fracturing of the "Out-Degree" network links connecting India to the west.</p>
+                <p>Because the damage is structural—like a broken bridge—pumping money into factories (subsidies) does almost nothing to fix the long-term issue, as proven by our <strong>Causal Forest network</strong>. Finally, our <strong>Reinforcement Learning AI Engine</strong> successfully optimized a 10-year policy strategy outperforming human baselines, demonstrating that economic survival relies exclusively on aggressively seeking and drafting new treaties with alternative global partners.</p>
+            </div>
+        </section>
+
+        <div class="text-center">
+            <a href="index.html" class="text-blue-600 font-bold hover:underline">Return to Home</a>
+        </div>
+
+    </main>
+
+    <footer class="border-t border-slate-200 bg-white py-12 text-center mt-16">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-blue-600 font-bold text-xl mb-4 tracking-tight">TradeSim</div>
+            <p class="text-slate-500 text-sm font-medium leading-relaxed max-w-xl mx-auto">
+                AI-Enabled Policy Simulation System &copy; 2026<br>
+                <span class="text-slate-400 font-normal mt-1 inline-block">Developed by Sajal Garg (IIT2023035)</span>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

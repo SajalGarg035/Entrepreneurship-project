@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Pipeline | AI Policy Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .bg-grid { background-size: 24px 24px; background-image: linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px); }
+        .zoom-img { transition: transform 0.3s ease; }
+        .zoom-img:hover { transform: scale(1.02); }
+    </style>
+</head>
+<body class="text-slate-800 antialiased pt-16">
+
+    <nav class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm transition-all">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="index.html" class="font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                <div class="w-6 h-6 bg-blue-600 rounded-md"></div>
+                Trade<span class="text-blue-600">Sim</span>
+            </a>
+            <div class="hidden lg:flex space-x-6 text-sm font-medium text-slate-600">
+                <a href="index.html" class="hover:text-blue-600 transition-colors">1. The Problem</a>
+                <a href="data.html" class="hover:text-blue-600 transition-colors">2. Data Pipeline</a>
+                <a href="ai_models.html" class="hover:text-blue-600 transition-colors">3. AI & Forecasting</a>
+                <a href="policy_engine.html" class="hover:text-blue-600 transition-colors">4. Policy Engine</a>
+            </div>
+            <!-- Mobile Menu Button could go here -->
+        </div>
+    </nav>
+
+
+    <header class="bg-blue-600 text-white py-16">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <h1 class="text-4xl font-extrabold mb-4">Building a Digital Twin of Global Trade</h1>
+            <p class="text-xl text-blue-100">Step 1: Gathering the raw materials to train the AI.</p>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-6 py-16 space-y-16">
+        <section>
+            <h2 class="text-3xl font-bold mb-6">Where does the information come from?</h2>
+            <p class="text-lg text-slate-600 mb-8">Before an AI can predict economic crashes, it needs to learn the rules of the world. We combined five massive, distinct, real-world databases spanning 20 years. Think of it like teaching the AI history, geography, and math all at once.</p>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-xl border border-slate-200">
+                    <h3 class="font-bold text-xl text-slate-800 mb-2">1. WTO / WITS</h3>
+                    <p class="text-sm text-slate-600"><strong>The Tax Code:</strong> Tracks exact tariff rates across borders. This tells our model exactly how expensive it is to send goods from one country to another.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200">
+                    <h3 class="font-bold text-xl text-slate-800 mb-2">2. UN Comtrade</h3>
+                    <p class="text-sm text-slate-600"><strong>The Ledger:</strong> The actual dollar amounts of what countries buy and sell. The raw measurement of export volume.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200">
+                    <h3 class="font-bold text-xl text-slate-800 mb-2">3. OECD ICIO</h3>
+                    <p class="text-sm text-slate-600"><strong>The Supply Chain:</strong> Measures "Value Added". E.g., if a car is assembled in Germany but uses Indian steel, this database tracks where the real money went.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200">
+                    <h3 class="font-bold text-xl text-slate-800 mb-2">4. Supply Graph nodes</h3>
+                    <p class="text-sm text-slate-600"><strong>The Network:</strong> Converts trade routes into mathematical "nodes" and "edges" (like dots connected by strings) to see the web of the world.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+            <h2 class="text-2xl font-bold mb-4">Making Sense of It All (Feature Engineering)</h2>
+            <p class="text-slate-600 mb-6">The AI doesn't just read dollar amounts. We engineered specific "smart features" to help the AI understand the country's posture and strength:</p>
+            
+            <ul class="space-y-4">
+                <li class="flex items-start">
+                    <div class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold mr-4">1</div>
+                    <div>
+                        <strong class="block text-slate-900">Out-Degree Centrality</strong>
+                        <span class="text-slate-600 text-sm">How many direct trading partners does an industry have? E.g., If India's auto sector only sells to the USA, its centrality is low (fragile). If it sells to 50 countries, it's high (secure).</span>
+                    </div>
+                </li>
+                <li class="flex items-start">
+                    <div class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold mr-4">2</div>
+                    <div>
+                        <strong class="block text-slate-900">Dependency Ratio</strong>
+                        <span class="text-slate-600 text-sm">Does this industry build things from scratch, or does it rely heavily on imported raw materials to function?</span>
+                    </div>
+                </li>
+                <li class="flex items-start">
+                    <div class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold mr-4">3</div>
+                    <div>
+                        <strong class="block text-slate-900">Tariff Differentials</strong>
+                        <span class="text-slate-600 text-sm">The delta between what India pays to export to the US vs what the EU pays.</span>
+                    </div>
+                </li>
+            </ul>
+        </section>
+
+        <div class="text-center pt-8">
+            <a href="ai_models.html" class="inline-block bg-slate-900 text-white font-bold py-4 px-8 rounded-xl hover:bg-slate-800 transition">Next: Applying the AI & Models &rarr;</a>
+        </div>
+    </main>
+
+    <footer class="border-t border-slate-200 bg-white py-12 text-center mt-16">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-blue-600 font-bold text-xl mb-4 tracking-tight">TradeSim</div>
+            <p class="text-slate-500 text-sm font-medium leading-relaxed max-w-xl mx-auto">
+                AI-Enabled Policy Simulation System &copy; 2026<br>
+                <span class="text-slate-400 font-normal mt-1 inline-block">Developed by Sajal Garg (IIT2023035)</span>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
